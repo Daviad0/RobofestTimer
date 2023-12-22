@@ -1,0 +1,1376 @@
+<title>Robofest Timer</title>
+<style>
+    .btn-group {
+        display: flex;
+    }
+
+
+    .btn {
+        flex: 1
+    }
+
+    .btn-default {
+        background-color: gray
+    }
+
+    .big {
+        font-size: 1.2em;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 10px; /* demo only */
+    }
+
+        .custom-dropdown select {
+            background-color: #1abc9c;
+            color: #fff;
+            font-size: inherit;
+            padding: .5em;
+            padding-right: 2.5em;
+            border: 0;
+            margin: 0;
+            border-radius: 3px;
+            text-indent: 0.01px;
+            text-overflow: '';
+            -webkit-appearance: button; /* hide default arrow in chrome OSX */
+        }
+
+        .custom-dropdown::before,
+        .custom-dropdown::after {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .custom-dropdown::after { /*  Custom dropdown arrow */
+            content: "\25BC";
+            height: 1em;
+            font-size: .625em;
+            line-height: 1;
+            right: 1.2em;
+            top: 50%;
+            margin-top: -.5em;
+        }
+
+        .custom-dropdown::before { /*  Custom dropdown arrow cover */
+            width: 2em;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .custom-dropdown select[disabled] {
+            color: rgba(0,0,0,.3);
+        }
+
+            .custom-dropdown select[disabled]::after {
+                color: rgba(0,0,0,.1);
+            }
+
+        .custom-dropdown::before {
+            background-color: rgba(0,0,0,.15);
+        }
+
+        .custom-dropdown::after {
+            color: rgba(0,0,0,.4);
+        }
+
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: transparent;
+        color: white;
+        text-align: right;
+    }
+
+    .createforms {
+        border: none;
+        border-bottom: 2px solid gray;
+        padding-left: 2px;
+        transition: 0.3s;
+        border-radius: 4px;
+    }
+
+        .createforms:hover {
+            background-color: #ededed;
+            padding-left: 5px;
+        }
+
+        .createforms:focus {
+            border-bottom: 2px solid red;
+            background-color: #ededed;
+            padding-left: 5px;
+        }
+
+        .createforms:disabled, .createforms:read-only {
+            cursor: not-allowed;
+            padding-left: 2px;
+            transition: 0.3s;
+        }
+
+            .createforms:disabled:hover, .createforms:disabled:active, .createforms:read-only:hover, .createforms:read-only:active {
+                cursor: not-allowed;
+                background-color: red;
+                padding-left: 5px;
+                opacity: 0.6;
+            }
+
+    .text-danger {
+        text-align: center;
+    }
+
+    .ready {
+        animation-name: color;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes color {
+        0% {
+            background-color: mediumseagreen
+        }
+
+        50% {
+            background-color: seagreen;
+        }
+    }
+    .almostdone {
+        animation-name: colordone;
+        animation-duration: 1.5s;
+        animation-iteration-count: infinite;
+    }
+    .almostdoneup {
+        animation-name: colordoneup;
+        animation-duration: 1.5s;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes colordone {
+        0% {
+            border-bottom-color: green;
+            border-top-color: green;
+            background-color: green
+        }
+
+        50% {
+            border-bottom-color: orange;
+            border-top-color: orange;
+            background-color: orange;
+        }
+    }
+    @keyframes colordoneup {
+        0% {
+            border-bottom-color: deeppink;
+            border-top-color: deeppink;
+            background-color: deeppink
+        }
+
+        50% {
+            border-bottom-color: mediumpurple;
+            border-top-color: mediumpurple;
+            background-color: mediumpurple;
+        }
+    }
+
+    .judgehelp {
+        animation-name: color2;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes color2 {
+        0% {
+            background-color: yellow
+        }
+
+        50% {
+            background-color: red;
+        }
+    }
+
+
+    .overlay {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 2;
+    }
+
+    .textoverlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        color: black;
+        background-color: white;
+        transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+    }.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+     .timerstarted{
+         animation-name: sizeuptimer;
+         animation-duration: 1s;
+         animation-iteration-count: 1;
+     }
+    .timerstopped {
+        animation-name: sizedowntimer;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+    }
+    .timerstartedsm {
+        animation-name: sizeuptimersm;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+    }
+
+    .timerstoppedsm {
+        animation-name: sizedowntimersm;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+    }
+
+    .statustimeout {
+        transition: width linear 1s;
+    }
+
+    @keyframes sizeuptimer {
+        0% {
+            font-size: 200px
+        }
+
+        100% {
+            font-size: 300px
+        }
+    }
+
+    @keyframes sizedowntimer {
+        0% {
+            font-size: 300px
+        }
+
+        100% {
+            font-size: 200px
+        }
+    }
+    @keyframes sizeuptimersm {
+        0% {
+            font-size: 200px
+        }
+
+        100% {
+            font-size: 250px
+        }
+    }
+
+    @keyframes sizedowntimersm {
+        0% {
+            font-size: 250px
+        }
+
+        100% {
+            font-size: 200px
+        }
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+.ournavbar{
+    display:none
+}.robofestmascot{
+     position:fixed;
+     bottom:0;
+     right:0;
+ }
+    .robofestlogo {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+
+    .noselect {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+    }
+    .invalidglow{
+        box-shadow: 0 0 5px rgba(245, 66, 66, 1);
+    }
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<div style="background-color:#EEEEEE;border-radius:6px;border:20px solid #EEEEEE;z-index:-1;text-align:center;padding:10px;height:104vh" class="noselect">
+    
+    <div id="timerclass">
+        <span style="font-size:40px;font-weight:600" id="messageshow">Game Match</span>
+        <br />
+        <div style="border-radius:4px;display:inline-block;border-radius:8px;margin:40px;margin-top:20px">
+
+            <strong id="timeeeeer"><span style="border-radius:8px 8px 0px 0px;font-family:Arial, Helvetica, sans-serif;background-color:black;padding:25px;padding-right:95px;padding-left:95px;color:white;margin-bottom:0px;margin-top:0px;font-size:200px" class="timerarea"><span id="minutes" class="timerarea minutes">0</span>:<span id="seconds" class="timerarea seconds">00</span></span></strong>
+
+            <div style="background-color:lightgray;text-align:center;border-radius:0px 0px 8px 8px">
+
+                <div class="statustimeout status" style="background-color:gray;width:100%;height:40px;border-radius:0px 0px 8px 8px;margin-top:-25px">
+                    
+                </div>
+              
+            </div>
+
+        </div>
+    </div>
+    <div style="display: inherit">
+        <input type="button" id="starttimer" value="Start" style="background-color:lightgray;width:100%;padding:10px;margin-bottom:10px;margin-top:10px;color:white;font-weight:600;border:none;border-radius:8px;cursor:not-allowed" disabled title="The timer must be set to a value above 0:00"/>
+        <input type="button" id="stoptimer" value="Stop" style="background-color:#e32b56;width:100%;padding:10px;margin-bottom:10px;color:white;font-weight:600;border:none;border-radius:8px" hidden/>
+        <input type="button" id="confirmstop" value="CONFIRM STOP!" style="background-color:darkred;width:100%;padding:10px;margin-bottom:10px;color:white;font-weight:600;border:none;border-radius:8px" hidden="hidden" />
+        <br />
+        <input type="button" id="sendtimer" value="Set to User Specified Value" style="width:100%;padding:10px;margin-bottom:10px;color:white;font-weight:600;border:none;border-radius:8px;background-color:lightgray;cursor:not-allowed" disabled title="You must input both minutes and seconds!"/>
+        
+        <br />
+        <table style="width:100%">
+            <tr>
+                <td style="width:50%">
+                    <div class="input-group" style="margin:10px;margin-bottom:3px">
+                        <span class="input-group-addon" style="        background-color: gray;
+        color: white
+">
+                            <span>Minutes</span>
+                        </span>
+                        <input type="number" id="minutesi" placeholder="0 - 720" class="form-control requiredtostart invalidglow" style="z-index:0" min="0" maxlength="4" max="180" />
+                    </div>
+                </td>
+                <td style="width:50%">
+                    <div class="input-group" style="margin:10px;margin-bottom:3px">
+                        <span class="input-group-addon" style="background-color:gray;color:white">
+                            <span>Seconds</span>
+                        </span>
+                        <input type="number" id="secondsi" placeholder="0 - 59" class="form-control requiredtostart invalidglow" style="z-index:0" min="0" max="59" maxlength="2" />
+                    </div>
+                </td>
+            </tr>
+           
+        </table>
+        <div class="input-group" style="margin:10px">
+            <span class="input-group-addon" style="background-color:gray;color:white">
+                <span>Message</span>
+            </span>
+            <input type="text" id="messagei" class="form-control" style="z-index:0" />
+        </div>
+        <br />
+        
+
+        <div style="text-align:center" id="countdownoptions">
+            <div style="text-align:center;display:inline-flex;width:100%;justify-content:center">
+                <div style="display:inline-block;margin:10px;padding-top:5px;padding-right:50px;border-right:2px solid lightgray">
+                    <input type="button" id="presetmatch" value="Match Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600"/>
+                    <input type="button" id="presettimeout" value="Timeout Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600" />
+                    <input type="button" id="presetpittime" value="Pit Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600" />
+                    <br />
+                    <input type="button" id="presetpresentation" value="Presentation Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600;margin-top:5px" />
+                    <input type="button" id="presetqna" value="Q&A Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600" />
+                    <input type="button" id="presetteamintro" value="Team Intro Preset" style="background-color:deepskyblue;border-radius:5px;border:none;color:white;font-weight:600;margin-top:5px" />
+                </div>
+                <div style="display:inline-block;background-color:lightgray;border-radius:8px;margin:10px;margin-left:50px;padding:10px;padding-left:18px;padding-right:18px">
+                    <span style="font-size:15px;font-weight:600;margin-right:10px">Timer Direction: </span>
+                    <input type="button" id="changetimerdirection" value="Down" style="background-color:#f542ec;width:90px;padding:10px;color:white;font-weight:600;border:none;border-radius:8px"/>
+                </div>
+            </div>
+            <a style="margin-top:20px"id="aboutClick">About...</a>
+          
+        </div>
+        <a style="margin-top:20px"id="fullscreen">Go Fullscreen</a>
+        
+        
+    </div>
+  
+    <audio src="/images/TimerFinished.wav" id="timerdone" ></audio>
+</div>
+<div class="robofestmascot noselect">
+    <img src="/images/robofestMascot_transp.png" style="width:120px;margin-right:10px;margin-bottom:10px"/>
+</div>
+<div class="robofestlogo noselect">
+    <img src="/images/robofest_words_transparent.png" style="width:180px;margin-left:20px;margin-bottom:20px"/>
+</div>
+<div class="overlay" style="display:none" id="about">
+    <div class="textoverlay" style="background-color:white;padding:20px;border-radius:6px;text-align:center">
+        <span style="font-size:24px;font-weight:bold;text-align:center">About This App</span><br/><br />
+        <span style="font-size:16px;text-align:center">This Robofest online timer was created by David Reeves, a student of the class of 2023. The app was developed in ASP.NET, JS, HTML, and CSS, but uses mostly just static content due to it's disconnect from C#. This app was actually originally an idea to create an entire online scoring system for the GAME competition of Robofest, but was eventually revised to the simplistic timer that is on this webpage. I am personally hoping to make an intricate system that is dynamic and easy to use in the future, but there might be some <i>development</i> needed in my programming skills. Thanks so much for visiting, and have a nice day!!</span><br /><br />
+        <input type="button" value="OK" id="aboutExit" style="background-color:#f542ec;width:90px;padding:10px;color:white;font-weight:600;border:none;border-radius:8px;display:inline-block" />
+    </div>
+</div>
+
+<script>
+
+    document.getElementById("aboutClick").addEventListener("click", function () {
+        document.getElementById("about").style.display = "block";
+    });
+    document.getElementById("aboutExit").addEventListener("click", function () {
+        document.getElementById("about").style.display = "none";
+    });
+    var elem = document.documentElement
+    $("#fullscreen").on('click', function () {
+        var el = document.getElementById('timeeeeer');
+
+        // use necessary prefixed versions
+        el.webkitRequestFullscreen();
+
+        // finally the standard version
+        el.requestFullscreen();
+    });
+        
+    
+</script>
+<script>
+    $(function () {
+        var startTime = undefined;
+        var endTime = undefined;
+      
+        var timer = false;
+        var minutesc = 0;
+        var secondsc = 0;
+        var secondsview = "00";
+        var interval = false;
+        var part = 1;
+        var minutess = 0;
+        var secondss = 0;
+        var smalltimerview = false;
+        var message = "";
+        var abort = false;
+        var stopped = true;
+        var initseconds = 0;
+        var fieldarray = [0, 0, 0, 0, 0, 0];
+        var fieldconnected = [false, false, false, false, false, false]
+        var fieldjudge = ["", "", "", "", "", ""]
+        var currentstage = 0;
+        var dangercontrols = false;
+        var dangertimer = 0;
+        var confirmstoptimer = 0;
+        var roundidlist = [0, 0, 0, 0, 0, 0];
+        var publicround = 0;
+        var currentmatch = 1;
+        var timerendingphase = false;
+        var oldmatchselected = false;
+        var settimem = 0;
+        var settimes = 0;
+        var resetautomatically = false;
+        var timerdirectiondown = true;
+        var matchesvalid = [false, false, false, false, false, false]
+        // Reference the auto-generated proxy for the hub.
+        // Create a function that the hub can call back to display messages.
+        // Start the connection.
+        var fieldsub = 0;
+        var lockedin = false;
+
+
+
+        $(document).ready(function () {
+
+        });
+        $("#changetimerdirection").click(function () {
+            if (timerdirectiondown) {
+                timerdirectiondown = false;
+                $("#changetimerdirection").val("Up");
+                minutesc = 0;
+                secondsc = 0;
+                SetView(minutesc, secondsc, 2);
+                $("#sendtimer").attr("disabled", true);
+                        $("#sendtimer").attr("title", "You must input both minutes and seconds!");
+                        $("#sendtimer").css("cursor", "not-allowed");
+                $("#sendtimer").css("background-color", "lightgray");
+                $(".status").css("border-bottom", "12px gray solid");
+                    $(".status").css("border-top", "12px gray solid");
+                    $(".statustopbar").css("border-left", "6px gray solid");
+                    $(".statustimeout").css("background-color", "gray");
+                $(".status").removeClass("almostdone");
+                $("#sendtimer").val("Reset Timer to 0:00");
+                var secondsvalid = false;
+            var minutesvalid = false;
+            if ($("#minutesi").val() != "") {
+                if (parseInt($("#minutesi").val()) > -1 && parseInt($("#minutesi").val()) < 721) {
+                    minutesvalid = true;
+                    $("#minutesi").removeClass("invalidglow");
+                } else {
+                    minutesvalid = false;
+                    $("#minutesi").addClass("invalidglow");
+                }
+            } else {
+                minutesvalid = false;
+                $("#minutesi").addClass("invalidglow");
+            }
+            if ($("#secondsi").val() != "") {
+                if (parseInt($("#secondsi").val()) > -1 && parseInt($("#secondsi").val()) < 60) {
+                    secondsvalid = true;
+                    $("#secondsi").removeClass("invalidglow");
+                } else {
+                    secondsvalid = false;
+                    $("#secondsi").addClass("invalidglow");
+                }
+            } else {
+                secondsvalid = false;
+                $("#secondsi").addClass("invalidglow");
+            }
+            if (minutesvalid && secondsvalid) {
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+            } else {
+                $("#sendtimer").attr("disabled", true);
+                $("#sendtimer").attr("title", "You must input both minutes (0-720) and seconds (0-59)!");
+                $("#sendtimer").css("cursor", "not-allowed");
+                $("#sendtimer").css("background-color", "lightgray");
+            }
+            } else {
+                timerdirectiondown = true;
+                $("#changetimerdirection").val("Down");
+                $("#sendtimer").val("Set to User Specified Value");
+                minutesc = 0;
+                secondsc = 0;
+                if (minutesc > 0 || secondsc > 0) {
+                    $("#starttimer").attr("disabled", false);
+                    $("#starttimer").css("background-color", "#1fa128");
+                    $("#starttimer").css("cursor", "pointer");
+                    $("#starttimer").attr("title", "Will instantly start the timer!");
+                } else {
+                    $("#starttimer").attr("disabled", true);
+                    $("#starttimer").css("background-color", "lightgray");
+                    $("#starttimer").css("cursor", "not-allowed");
+                    $("#starttimer").attr("title", "The timer must be set to a value above 0:00");
+                }
+                
+                SetView(minutesc, secondsc, 2);
+                $("#sendtimer").attr("disabled", true);
+                        $("#sendtimer").attr("title", "You must input both minutes and seconds!");
+                        $("#sendtimer").css("cursor", "not-allowed");
+                $("#sendtimer").css("background-color", "lightgray");
+                $(".status").css("border-bottom", "12px gray solid");
+                    $(".status").css("border-top", "12px gray solid");
+                    $(".statustopbar").css("border-left", "6px gray solid");
+                    $(".statustimeout").css("background-color", "gray");
+                $(".status").removeClass("almostdone");
+                var secondsvalid = false;
+            var minutesvalid = false;
+            if ($("#minutesi").val() != "") {
+                if (parseInt($("#minutesi").val()) > -1 && parseInt($("#minutesi").val()) < 721) {
+                    minutesvalid = true;
+                    $("#minutesi").removeClass("invalidglow");
+                } else {
+                    minutesvalid = false;
+                    $("#minutesi").addClass("invalidglow");
+                }
+            } else {
+                minutesvalid = false;
+                $("#minutesi").addClass("invalidglow");
+            }
+            if ($("#secondsi").val() != "") {
+                if (parseInt($("#secondsi").val()) > -1 && parseInt($("#secondsi").val()) < 60) {
+                    secondsvalid = true;
+                    $("#secondsi").removeClass("invalidglow");
+                } else {
+                    secondsvalid = false;
+                    $("#secondsi").addClass("invalidglow");
+                }
+            } else {
+                secondsvalid = false;
+                $("#secondsi").addClass("invalidglow");
+            }
+            if (minutesvalid && secondsvalid) {
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+            } else {
+                $("#sendtimer").attr("disabled", true);
+                $("#sendtimer").attr("title", "You must input both minutes (0-720) and seconds (0-59)!");
+                $("#sendtimer").css("cursor", "not-allowed");
+                $("#sendtimer").css("background-color", "lightgray");
+            }
+            }
+            
+        });
+            $(".roundbutton1").click(function () {
+                $("#submitteams").attr("hidden", false);
+                $("#round1list").css("background-color", "gray");
+                $("#round2list").css("background-color", "lightgray");
+                publicround = 1;
+            });
+            $(".roundbutton2").click(function () {
+                $("#submitteams").attr("hidden", false);
+                $("#round1list").css("background-color", "lightgray");
+                $("#round2list").css("background-color", "gray");
+                publicround = 2;
+            });
+            $("#submitteams").click(function () {
+                var teamid1 = $("#field1selection").val();
+                var teamid2 = $("#field2selection").val();
+                var teamid3 = $("#field3selection").val();
+                var teamid4 = $("#field4selection").val();
+                var teamid5 = $("#field5selection").val();
+                var teamid6 = $("#field6selection").val();
+                $("#teamsubmissionstatus").html("[" + teamid1 + ", " + teamid2 + ", " + teamid3 + ", " + teamid4 + ", " + teamid5 + ", " + teamid6 + "] selected for judges!")
+
+            });
+            $("#matchselector").change(function () {
+                if (oldmatchselected == true) {
+                    $("#oldmatch").remove();
+                    oldmatchselected = false
+                }
+                var selectedmatch = $(this).children(":selected").val();
+                var matchnumber = selectedmatch.split("-");
+                currentmatch = parseInt(matchnumber[0])
+            });
+            $("#clearchat").click(function () {
+                $(".volunteerchat").empty();
+            });
+            $("#senddatatest").click(function () {
+
+            });
+
+            $("#lockin").click(function () {
+                fieldsub += parseFloat($("#fieldn").val());
+                if (fieldsub > 6 || fieldsub < 1) {
+                    $("#fieldissue").text("Field must be 1-6!");
+                } else {
+                    lockedin = true;
+                    $("#fieldn").attr("disabled", true);
+                    $("#fieldissue").text("");
+                }
+            });
+
+
+
+            $("#seef1score").click(function () {
+                $("#scoreoverlayf1").css("display", "block");
+            });
+            $("#seef2score").click(function () {
+                $("#scoreoverlayf2").css("display", "block");
+            });
+            $("#seef3score").click(function () {
+                $("#scoreoverlayf3").css("display", "block");
+            });
+            $("#seef4score").click(function () {
+                $("#scoreoverlayf4").css("display", "block");
+            });
+            $("#seef5score").click(function () {
+                $("#scoreoverlayf5").css("display", "block");
+            });
+            $("#seef6score").click(function () {
+                $("#scoreoverlayf6").css("display", "block");
+            });
+            $("#hidef1score").click(function () {
+                $("#scoreoverlayf1").css("display", "none");
+            });
+            $("#hidef2score").click(function () {
+                $("#scoreoverlayf2").css("display", "none");
+            });
+            $("#hidef3score").click(function () {
+                $("#scoreoverlayf3").css("display", "none");
+            });
+            $("#hidef4score").click(function () {
+                $("#scoreoverlayf4").css("display", "none");
+            });
+            $("#hidef5score").click(function () {
+                $("#scoreoverlayf5").css("display", "none");
+            });
+            $("#hidef6score").click(function () {
+                $("#scoreoverlayf6").css("display", "none");
+            });
+            $("#editf1score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[0], "_blank");
+            });
+            $("#editf2score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[1], "_blank");
+            });
+            $("#editf3score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[2], "_blank");
+            });
+            $("#editf4score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[3], "_blank");
+            });
+            $("#editf5score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[4], "_blank");
+            });
+            $("#editf6score").click(function () {
+                window.open("/Team/RoundEdit/" + roundidlist[5], "_blank");
+            });
+            function dangersetback() {
+                if (dangertimer > 0) {
+                    dangertimer--;
+                    $("#dangerchange").val("Hiding Danger Controls in " + dangertimer + "...")
+                    setTimeout(dangersetback, 1000);
+                } else {
+                    $("#dangerchange").val("Show Danger Controls");
+                    $("#dangerchange").attr("disabled", false);
+                    $("#dangercontrols").css("display", "none");
+                }
+
+
+            }
+            $("#dangerchange").click(function () {
+                $("#dangercontrols").css("display", "");
+                dangercontrols = true;
+                $("#dangerchange").val("Hiding Danger Controls in 7...");
+                dangertimer = 7;
+                $("#dangerchange").attr("disabled", true);
+                setTimeout(dangersetback, 1000);
+                //#dangercontrols
+            });
+            $(".dangerbutton").click(function () {
+                dangertimer = 0;
+                $("#dangerchange").val("Hiding Danger Controls in 0...")
+            });
+            $("#readystatus").click(function () {
+                if (lockedin == true) {
+                    $("#fieldissue").text("");
+                }
+            });
+            $("#notreadystatus").click(function () {
+                if (lockedin == true) {
+                    $("#fieldissue").text("");
+                }
+            });
+        $('#sendtimer').click(function () {
+                    
+                sendTimer();
+                
+            });
+            $('#starttimer').click(function () {
+                StartTimer();
+                $("#minutesi").attr("disabled", true);
+                $("#secondsi").attr("disabled", true);
+                abort = false;
+                timer = true;
+                $('#starttimer').attr("hidden", true);
+                $('#stoptimer').attr("hidden", false);
+                $('#sendtimer').attr("hidden", true);
+                $("#countdownoptions").attr("hidden", true);
+
+            });
+            function confirmtimerstop() {
+                if (confirmstoptimer > 0) {
+                    confirmstoptimer--;
+                    $("#confirmstop").val("CONFIRM TIMER STOP (" + confirmstoptimer + ")")
+                    setTimeout(confirmtimerstop, 1000);
+                } else {
+                    if (timer == false) {
+                        $('#stoptimer').attr("hidden", true);
+                        $('#confirmstop').attr("hidden", true);
+                    } else {
+                        $('#stoptimer').attr("hidden", false);
+                        $('#confirmstop').attr("hidden", true);
+                    }
+                    
+                }
+            }
+        $("#stoptimer").click(function () {
+            abort = true;
+            timer = false;
+            $("#minutesi").attr("disabled", false);
+                $("#secondsi").attr("disabled", false);
+                $(".timerstatus").css("color", "black");
+                SetView(minutesc, secondsc, 3);
+                confirmstoptimer = 0;
+                $('#starttimer').attr("hidden", false);
+                $('#stoptimer').attr("hidden", true);
+                $('#confirmstop').attr("hidden", true);
+                $('#sendtimer').attr("hidden", false);
+                $("#countdownoptions").attr("hidden", false);
+                if (minutesc == 0 && secondsc == 0) {
+                    $("#starttimer").attr("disabled", true);
+                    $("#starttimer").css("background-color", "lightgray");
+                    $("#starttimer").attr("title", "The timer must be set to a value above 0:00");
+                    $("#starttimer").css("cursor", "not-allowed");
+                }
+                $(".timerarea").addClass("timerstopped");
+                $(".timerarea").removeClass("timerstarted");
+                 if (smalltimerview) {
+                    $(".timerarea").addClass("timerstoppedsm");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                } else {
+                    $(".timerarea").addClass("timerstopped");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                }
+                
+            });
+            $('#confirmstop').click(function () {
+                abort = true;
+                timer = false;
+                $(".timerstatus").css("color", "black");
+                SetView(minutesc, secondsc, 3);
+                confirmstoptimer = 0;
+                $('#starttimer').attr("hidden", false);
+                $('#stoptimer').attr("hidden", true);
+                $('#confirmstop').attr("hidden", true);
+                $('#sendtimer').attr("hidden", false);
+                $("#countdownoptions").attr("hidden", false);
+                if (minutesc == 0 && secondsc == 0) {
+                    $("#starttimer").attr("disabled", true);
+                    $("#starttimer").css("background-color", "lightgray");
+                    $("#starttimer").attr("title", "The timer must be set to a value above 0:00");
+                    $("#starttimer").css("cursor", "not-allowed");
+                }
+                $(".timerarea").addClass("timerstopped");
+                $(".timerarea").removeClass("timerstarted");
+                 if (smalltimerview) {
+                    $(".timerarea").addClass("timerstoppedsm");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                } else {
+                    $(".timerarea").addClass("timerstopped");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                }
+            });
+        $(".requiredtostart").on('change keydown keypress keyup mousedown click mouseup', function () {
+            var secondsvalid = false;
+            var minutesvalid = false;
+            if ($("#minutesi").val() != "") {
+                if (parseInt($("#minutesi").val()) > -1 && parseInt($("#minutesi").val()) < 721) {
+                    minutesvalid = true;
+                    $("#minutesi").removeClass("invalidglow");
+                } else {
+                    minutesvalid = false;
+                    $("#minutesi").addClass("invalidglow");
+                }
+            } else {
+                minutesvalid = false;
+                $("#minutesi").addClass("invalidglow");
+            }
+            if ($("#secondsi").val() != "") {
+                if (parseInt($("#secondsi").val()) > -1 && parseInt($("#secondsi").val()) < 60) {
+                    secondsvalid = true;
+                    $("#secondsi").removeClass("invalidglow");
+                } else {
+                    secondsvalid = false;
+                    $("#secondsi").addClass("invalidglow");
+                }
+            } else {
+                secondsvalid = false;
+                $("#secondsi").addClass("invalidglow");
+            }
+            if (minutesvalid && secondsvalid) {
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+            } else {
+                $("#sendtimer").attr("disabled", true);
+                $("#sendtimer").attr("title", "You must input both minutes (0-720) and seconds (0-59)!");
+                $("#sendtimer").css("cursor", "not-allowed");
+                $("#sendtimer").css("background-color", "lightgray");
+            }
+        });
+            $("#presetmatch").click(function () {
+                $("#minutesi").val(2);
+                $("#secondsi").val(0);
+                $("#messagei").val("Game Match");
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+                sendTimer();
+            });
+            $("#presettimeout").click(function () {
+                $("#minutesi").val(5);
+                $("#secondsi").val(0);
+                $("#messagei").val("Field Timeout");
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+                sendTimer();
+            });
+            $("#presetpittime").click(function () {
+                $("#minutesi").val(30);
+                $("#secondsi").val(0);
+                $("#messagei").val("Pit Work Time");
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+                sendTimer();
+            });
+            $("#presetpresentation").click(function () {
+                $("#minutesi").val(4);
+                $("#secondsi").val(0);
+                $("#messagei").val("Presentation Time");
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+                sendTimer();
+            });
+            $("#presetteamintro").click(function () {
+                    $("#minutesi").val(1);
+                    $("#secondsi").val(0);
+                    $("#messagei").val("Team Intro");
+                    $("#sendtimer").attr("disabled", false);
+                    $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                    $("#sendtimer").css("cursor", "pointer");
+                    $("#sendtimer").css("background-color", "dimgray");
+                    sendTimer();
+                });
+            $("#presetqna").click(function () {
+                $("#minutesi").val(2);
+                $("#secondsi").val(0);
+                $("#messagei").val("Q&A Time");
+                $("#sendtimer").attr("disabled", false);
+                $("#sendtimer").attr("title", "Set the timer to the current configuration");
+                $("#sendtimer").css("cursor", "pointer");
+                $("#sendtimer").css("background-color", "dimgray");
+                sendTimer();
+            });
+            function checkPongs() {
+                if (fieldconnected[0] == true) {
+                    $("#field1judge").html(fieldjudge[0])
+                    if (fieldarray[0] != 0 && fieldarray != 3) {
+                        $("#field1connection").html("Connected");
+                        $("#field1connection").css("background-color", "dimgray");
+                        $("#field1connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[0] != 0 && fieldarray[0] != 3) {
+                        $("#field1connection").html("Disconnected");
+                        $("#field1connection").css("background-color", "LemonChiffon");
+                        $("#field1connection").css("color", "red");
+                    }
+
+                }
+                if (fieldconnected[1] == true) {
+                    $("#field2judge").html(fieldjudge[1])
+                    if (fieldarray[1] != 0 && fieldarray != 3) {
+                        $("#field2connection").html("Connected");
+                        $("#field2connection").css("background-color", "dimgray");
+                        $("#field2connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[1] != 0 && fieldarray[1] != 3) {
+                        $("#field2connection").html("Disconnected");
+                        $("#field2connection").css("background-color", "LemonChiffon");
+                        $("#field2connection").css("color", "red");
+                    }
+
+                }
+                if (fieldconnected[2] == true) {
+                    $("#field3judge").html(fieldjudge[2])
+                    if (fieldarray[2] != 0 && fieldarray != 3) {
+                        $("#field3connection").html("Connected");
+                        $("#field3connection").css("background-color", "dimgray");
+                        $("#field3connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[2] != 0 && fieldarray[2] != 3) {
+                        $("#field3connection").html("Disconnected");
+                        $("#field3connection").css("background-color", "LemonChiffon");
+                        $("#field3connection").css("color", "red");
+                    }
+
+                }
+                if (fieldconnected[3] == true) {
+                    $("#field4judge").html(fieldjudge[3])
+                    if (fieldarray[3] != 0 && fieldarray != 3) {
+                        $("#field4connection").html("Connected");
+                        $("#field4connection").css("background-color", "dimgray");
+                        $("#field4connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[3] != 0 && fieldarray[3] != 3) {
+                        $("#field4connection").html("Disconnected");
+                        $("#field4connection").css("background-color", "LemonChiffon");
+                        $("#field4connection").css("color", "red");
+                    }
+
+                }
+                if (fieldconnected[4] == true) {
+                    $("#field5judge").html(fieldjudge[4])
+                    if (fieldarray[4] != 0 && fieldarray != 3) {
+                        $("#field5connection").html("Connected");
+                        $("#field5connection").css("background-color", "dimgray");
+                        $("#field5connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[4] != 0 && fieldarray[4] != 3) {
+                        $("#field5connection").html("Disconnected");
+                        $("#field5connection").css("background-color", "LemonChiffon");
+                        $("#field5connection").css("color", "red");
+                    }
+
+                }
+                if (fieldconnected[5] == true) {
+                    $("#field6judge").html(fieldjudge[6])
+                    if (fieldarray[5] != 0 && fieldarray != 3) {
+                        $("#field6connection").html("Connected");
+                        $("#field6connection").css("background-color", "dimgray");
+                        $("#field6connection").css("color", "white");
+                    }
+                } else {
+                    if (fieldarray[5] != 0 && fieldarray[5] != 3) {
+                        $("#field6connection").html("Disconnected");
+                        $("#field6connection").css("background-color", "LemonChiffon");
+                        $("#field6connection").css("color", "red");
+                    }
+
+                }
+                fieldconnected = [false, false, false, false, false, false]
+                $("#ping").html("2");
+                setTimeout(pingTeams, 500);
+            }
+            function sendTimer() {
+                abort = true;
+                timer = false;
+                part = 0;
+                
+                minutess = parseInt($("#minutesi").val());
+                secondss = parseInt($("#secondsi").val());
+                message = $("#messagei").val();
+                if (message == "") {
+                    message = "Timer";
+                }
+                initseconds = (minutess * 60) + (secondss);
+                if (timerdirectiondown) {
+                    minutesc = minutess;
+                    secondsc = secondss;
+                } else {
+                    minutesc = 0;
+                    secondsc = 0;
+                    settimem = minutess;
+                    settimes = secondss;
+                }
+                var settimesview = "";
+                if (settimes < 10) {
+                    settimesview = "0" + settimes;
+                } else {
+                    settimesview = settimes;
+                }
+                
+                
+                if (secondsc < 10) {
+                    secondsview = "0" + secondsc;
+                } else {
+                    secondsview = secondsc;
+                }
+                
+                if (timerdirectiondown) {
+                    $("#messageshow").html(message);
+                    if (minutesc > 0 || secondsc > 0) {
+                        $("#starttimer").attr("disabled", false);
+                        $("#starttimer").css("background-color", "#1fa128");
+                        $("#starttimer").css("cursor", "pointer");
+                        $("#starttimer").attr("title", "Will instantly start the timer!");
+                    } else {
+                        $("#starttimer").attr("disabled", true);
+                        $("#starttimer").css("background-color", "lightgray");
+                        $("#starttimer").css("cursor", "not-allowed");
+                        $("#starttimer").attr("title", "The timer must be set to a value above 0:00");
+                    }
+                } else {
+                    $("#messageshow").html(message + " (Up to " + settimem + ":" + settimesview + ")");
+                    $("#starttimer").attr("disabled", false);
+                    $("#starttimer").css("background-color", "#1fa128");
+                    $("#starttimer").css("cursor", "pointer");
+                    $("#starttimer").attr("title", "Will instantly start the timer!");
+                }
+                
+                
+                SetView(minutesc, secondsc, 0);
+            }
+            function pingTeams() {
+                $("#ping").html("1");
+                setTimeout(checkPongs, 3000);
+
+            }
+        setTimeout(pingTeams, 1000);
+        function CountUp() {
+            if (timer == true) {
+                
+                if (secondsc == 59) {
+                    if ((minutesc * 60) + secondsc <= (initseconds-1)) {
+                            minutesc = minutesc + 1;
+                            secondsc = 0;
+                            secondsview = "00";
+                        } else {
+                            timer = false;
+                            
+                            TimerEnded();
+                        }
+
+                } else if (secondsc < 11) {
+                    if ((minutesc * 60) + secondsc <= (initseconds-1)) {
+                            secondsc = secondsc + 1;
+                        secondsview = "0" + secondsc;
+                        } else {
+                            timer = false;
+                            
+                            TimerEnded();
+                        }
+                        
+                    }
+                else {
+                    if ((minutesc * 60) + secondsc <= (initseconds-1)) {
+                        
+                            secondsc = secondsc + 1;
+                        secondsview = secondsc;
+                        } else {
+                            timer = false;
+                            
+                            TimerEnded();
+                        }
+                        
+                    }
+                }
+        }
+            function Countdown() {
+                if (timer == true) {
+                    if (secondsc == 0) {
+                        if (minutesc > 0) {
+                            minutesc = minutesc - 1;
+                            secondsc = 59;
+                            secondsview = "59";
+                        } else {
+                            timer = false;
+                            TimerEnded();
+                        }
+
+                    } else if (secondsc < 11) {
+                        secondsc = secondsc - 1;
+                        secondsview = "0" + secondsc;
+                    }
+                    else {
+                        secondsc = secondsc - 1;
+                        secondsview = secondsc;
+                    }
+                }
+            }
+            function SetView(minutes, seconds, status) {
+                $(".minutes").html(minutes);
+                if (secondsc < 10) {
+                    secondsview = "0" + secondsc;
+                } else {
+                    secondsview = secondsc;
+                }
+                $(".seconds").html(secondsview);
+                if (status == 0) {
+                    if (timerdirectiondown) {
+                        $(".status").css("border-bottom", "12px gray solid");
+                        $(".status").css("border-top", "12px gray solid");
+                        $(".statustopbar").css("border-left", "6px gray solid");
+                        $(".statustimeout").css("background-color", "gray");
+                        $(".status").removeClass("almostdone");
+                        $(".status").removeClass("almostdoneup");
+                        initsec = ((minutes * 60) + (seconds));
+                        $(".statustimeout").css("width", "100%");
+                    } else {
+                        $(".statustimeout").css("width", "0%");
+                    }
+                    
+                } else if (status == 1) {
+                    
+                    
+                    if (timerdirectiondown) {
+                        $(".status").css("border-bottom", "12px green solid");
+                    $(".status").css("border-top", "12px green solid");
+                    $(".statustopbar").css("border-left", "6px green solid");
+                    $(".statustimeout").css("background-color", "green");
+                        if (((minutes * 60) + (seconds)) < (initseconds / 4)) {
+                            $(".status").addClass("almostdone");
+                        }
+                        
+                    } else {
+                        $(".status").css("border-bottom", "12px deeppink solid");
+                    $(".status").css("border-top", "12px deeppink solid");
+                    $(".statustopbar").css("border-left", "6px deeppink solid");
+                    $(".statustimeout").css("background-color", "deeppink");
+                        if (((minutes * 60) + (seconds)) > ((initseconds / 4) * 3)) {
+                            $(".status").addClass("almostdoneup");
+                        }
+                    }
+                    $(".statustimeout").css("width", ((((minutes * 60) + seconds) / initseconds) * 100) + "%")
+                    
+                } else if (status == 2 && seconds < 1 && minutes < 1) {
+                    if (timerdirectiondown) {
+                        $(".status").css("border-bottom", "12px red solid");
+                        $(".statustopbar").css("border-left", "6px red solid");
+                        $(".status").css("border-top", "12px red solid");
+
+                        $(".statustimeout").css("background-color", "red");
+                        $(".statustimeout").css("width", "100%");
+                        $(".status").removeClass("almostdone");
+                        $(".status").removeClass("almostdoneup");
+                    }
+                    
+                } else {
+                    $(".status").css("border-bottom", "12px gray solid");
+                    $(".status").css("border-top", "12px gray solid");
+                    $(".statustopbar").css("border-left", "6px gray solid");
+                    $(".statustimeout").css("background-color", "gray");
+                    $(".status").removeClass("almostdone");
+                    $(".status").removeClass("almostdoneup");
+                }
+            }
+        function StartTimer() {
+            part = 0;
+            var count = setInterval(function () {
+                if (timerdirectiondown) {
+                    if (abort == true) {
+                        clearInterval(count);
+                        SetView(minutesc, secondsc, 2);
+                    } else {
+                        SetView(minutesc, secondsc, 1);
+                    }
+
+                    if ((part % 10) == 0) {
+                        Countdown();
+                    }
+                    part++;
+                    window.focus();
+                } else {
+                    if (abort == true) {
+                        clearInterval(count);
+                        SetView(minutesc, secondsc, 2);
+                    } else {
+                        SetView(minutesc, secondsc, 1);
+                    }
+
+                    if ((part % 10) == 0) {
+                        CountUp();
+                    }
+                    part++;
+                    window.focus();
+                }
+                    
+                }, 100);
+                
+            $('#stoptimer').attr("hidden", false);
+            if ((minutesc + ":" + secondsview).length > 5) {
+                $(".timerarea").removeClass("timerstoppedsm");
+                $(".timerarea").removeClass("timerstopped");
+                $(".timerarea").addClass("timerstartedsm");
+                smalltimerview = true;
+                setTimeout($(".timerarea").css("font-size", "250px"), 1000);
+            } else {
+                $(".timerarea").removeClass("timerstoppedsm");
+                $(".timerarea").removeClass("timerstopped");
+                $(".timerarea").addClass("timerstarted");
+                smalltimerview = false;
+                setTimeout($(".timerarea").css("font-size", "300px"), 1000);
+            }
+                
+                
+            }
+        function TimerEnded() {
+                document.getElementById('timerdone').play();
+                abort = true;
+                timer = false;
+                $("#minutesi").attr("disabled", false);
+                $("#secondsi").attr("disabled", false);
+                $(".timerstatus").css("color", "red");
+                SetView(minutesc, secondsc, 2);
+                abort = true;
+                timer = false;
+                $(".timerstatus").css("color", "black");
+                SetView(minutesc, secondsc, 3);
+                confirmstoptimer = 0;
+                $('#starttimer').attr("hidden", false);
+                $('#stoptimer').attr("hidden", true);
+                $('#confirmstop').attr("hidden", true);
+                $('#sendtimer').attr("hidden", false);
+                $("#countdownoptions").attr("hidden", false);
+                if (minutesc == 0 && secondsc == 0) {
+                    $("#starttimer").attr("disabled", true);
+                    $("#starttimer").css("background-color", "lightgray");
+                    $("#starttimer").attr("title", "The timer must be set to a value above 0:00");
+                    $("#starttimer").css("cursor", "not-allowed");
+                }
+                
+                if (smalltimerview) {
+                    $(".timerarea").addClass("timerstoppedsm");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                } else {
+                    $(".timerarea").addClass("timerstopped");
+                    $(".timerarea").removeClass("timerstartedsm");
+                    $(".timerarea").removeClass("timerstarted");
+                    setTimeout($(".timerarea").css("font-size", "200px"), 1000);
+                }
+                
+            }
+
+
+
+
+
+    });
+
+
+</script>
+<br />
+
+<script type="text/javascript">
+    $("#bitslot4 select").on("change", function () {
+
+        //Stack
+        var subtotalstack = 0;
+        $(":radio[id='stack']:checked").each(function () {
+            subtotalstack += Number(this.value);
+        });
+        $("#subtotalstack").text(subtotalstack);
+        //Extra
+        var subtotalextra = 0;
+        $(":radio[id='extra']:checked").each(function () {
+            subtotalextra += Number(this.value);
+        });
+        $("#subtotalextra").text(subtotalextra);
+        //Penalty
+        var subtotalpenalty = 0;
+        $(":radio[id='penalty']:checked").each(function () {
+            subtotalpenalty += Number(this.value);
+        });
+        $("#subtotalpenalty").text(subtotalpenalty);
+        //Total
+        var total = 0;
+        $(":radio:checked").each(function () {
+            total += Number(this.value);
+        });
+        $("#total").text(total);
+        $("#teamID").val(total);
+        $("#teamIDcopy").text(total);
+        var description = subtotalbs + "/" + subtotalstack + "/" + subtotalextra + "/" + subtotalpenalty;
+        $("#data").val(description);
+    });
+
+</script>
+
